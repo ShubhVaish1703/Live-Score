@@ -4,10 +4,11 @@ import { fetchNewsListBySport } from '@/lib/actions/NewsActions/NewsActions';
 import React from 'react'
 import { useInView } from "react-intersection-observer";
 import Spinner from './Spinner';
+import ShowLoadedData from './ShowLoadedData';
 
-const LoadMore = () => {
+const LoadMore = ({id}: {id: string}) => {
     const [data, setData] = React.useState<any>([]);
-    const [pagesLoaded, setPagesLoaded] = React.useState(1);
+    const [pagesLoaded, setPagesLoaded] = React.useState(0);
 
     const { ref, inView } = useInView();
 
@@ -20,7 +21,7 @@ const LoadMore = () => {
             await delay(2000);
             const nextPage = pagesLoaded + 1;
             const res = await fetchNewsListBySport({
-                category: "2021020913320920836",
+                category: id ,
                 pageNo: nextPage.toString(),
             })
             const newNews = res?.data;
@@ -31,12 +32,12 @@ const LoadMore = () => {
         if (inView) {
             loadMoreNews();
         }
-    }, [inView, pagesLoaded])
+    }, [inView, pagesLoaded, id])
 
     return (
         <>
-            <Section1 data={data} />
-            <div className="flex justify-center items-center py-3 col-span-1 md:col-span-2 lg:col-span-3 w-full" ref={ref}>
+            <ShowLoadedData data={data} />
+            <div className="flex justify-center items-center py-3 col-span-1 md:col-span-2 lg:col-span-3 w-full min-h-[25vh]" ref={ref}>
                 <Spinner />
             </div>
         </>
